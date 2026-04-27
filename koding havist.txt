@@ -320,8 +320,10 @@
                     <option value="300000|375000">The 101</option>
                     <option value="300000|375000">Best City</option>
                     <option value="300000|375000">Royal Malioboro</option>
-                    <option value="300000|375000">Grand Zuri</option>
+                    <option value="300000|375000">Grand Zuri Maliboro</option>
                     <option value="300000|375000">éL Hotel Yogyakarta</option>
+                    <option value="300000|375000">KJ Hotel</option>
+                    <option value="300000|375000">Cavinton Hotel</option>
                 </optgroup>
             </select>
                     </div>
