@@ -322,6 +322,9 @@
                     <option value="300000|375000">Royal Malioboro</option>
                     <option value="300000|375000">Grand Zuri</option>
                     <option value="300000|375000">éL Hotel Yogyakarta</option>
+                    <option value="300000|375000">CAVINTON HOTEL</option>
+                    <option value="300000|375000">GALLERY PRAWIROTAMAN</option>
+
                 </optgroup>
             </select>
                     </div>
@@ -592,12 +595,25 @@ function hitung() {
     const isWeekend = tgl && (new Date(tgl).getDay() === 0 || new Date(tgl).getDay() === 6);
     const hotelRate = isWeekend ? parseFloat(hotelData[1]) : parseFloat(hotelData[0]);
 
-    // LOGIKA PERHITUNGAN (Sama dengan kode asli)
-    const costTransport = transportRate * (malam + 1);
+    // === HITUNG JUMLAH BUS ===
+    let kapasitasBus = 45;
+    const transportText = document.getElementById('transportSelect').selectedOptions[0].text;
+
+    if (transportText.includes("ELF")) kapasitasBus = 15;
+    else if (transportText.includes("HIACE")) kapasitasBus = 14;
+    else if (transportText.includes("MEDIUM")) kapasitasBus = 33;
+    else if (transportText.includes("BIG BUS")) kapasitasBus = 45;
+
+    const jumlahBus = Math.ceil(p / kapasitasBus);
+    const totalHari = malam + 1;
+
+    const costTransport = transportRate * jumlahBus * totalHari;
+
+    // === BIAYA LAIN ===
     const costMakan = (mFreq * mPrice) * p;
-    const costHotel = (malam > 0) ? (hotelRate * malam * Math.ceil(p/share)) : 0;
+    const costHotel = (malam > 0) ? (hotelRate * malam * Math.ceil(p / share)) : 0;
     const costKaos = kaosRate * p;
-    
+
     let costWisata = 0;
     document.querySelectorAll('.dest:checked').forEach(d => {
         costWisata += (parseFloat(d.getAttribute('data-price')) * p);
@@ -605,36 +621,36 @@ function hitung() {
     });
 
     document.querySelectorAll('.city-box').forEach(box => {
-        if (box.querySelectorAll('.dest:checked').length === 0) box.classList.remove('has-checked');
+        if (box.querySelectorAll('.dest:checked').length === 0) {
+            box.classList.remove('has-checked');
+        }
     });
 
     const totalModal = costTransport + costMakan + costHotel + costWisata + costKaos;
-    const totalMarkup = totalModal * 1.20; // Markup 20%
+    const totalMarkup = totalModal * 1.20; // markup 20%
 
     const jmlFreePax = Math.floor(p / 10); // FOC 1:10
     const focPilihan = Math.min(jmlFreePax, 25);
-    const subsidiFOC = focPilihan * (p > 0 ? totalMarkup/p : 0);
+    const subsidiFOC = focPilihan * (p > 0 ? totalMarkup / p : 0);
 
     const totalJualGrup = totalMarkup - subsidiFOC;
     const hargaPerPax = p > 0 ? Math.ceil((totalJualGrup / p) / 1000) * 1000 : 0;
-    const komisiSales = totalJualGrup * 0.05; // Sales 5%
+    const komisiSales = totalJualGrup * 0.05;
 
-    // Update UI
+    // === UPDATE UI ===
     document.getElementById('perOrang').innerText = "Rp " + hargaPerPax.toLocaleString('id-ID');
     document.getElementById('focInfo').innerText = focPilihan + " Pax";
     document.getElementById('salesInfo').innerText = "Rp " + Math.round(komisiSales).toLocaleString('id-ID');
-    document.getElementById('durasiInfo').innerText = (malam + 1) + " Hari " + malam + " Malam";
-    
+    document.getElementById('durasiInfo').innerText = totalHari + " Hari " + malam + " Malam";
+
     const kaosStatus = kaosRate > 0 ? "Include Merchandise" : "No Merchandise";
     document.getElementById('summaryText').innerHTML = `
         <strong>Group Size:</strong> ${p} Pax<br>
+        <strong>Transport:</strong> ${jumlahBus} Unit (${transportText})<br>
         <strong>Catering:</strong> ${mFreq}x Meal Service<br>
-        <strong>Add-ons:</strong> ${kaosStatus}<br>
-        <strong>Fleet:</strong> ${document.getElementById('transportSelect').selectedOptions[0].text}
+        <strong>Add-ons:</strong> ${kaosStatus}
     `;
 }
 
 window.onload = hitung;
 </script>
-</body>
-</html>
