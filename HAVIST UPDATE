@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Havist Traveller - Enterprise Quotation System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Outfit:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <style>
+        :root { 
+            --primary-dark: #0f172a; 
+            --accent-blue: #2563eb; 
+            --accent-cyan: #06b6d4;
+            --bg-body: #f1f5f9;
+            --glass-white: rgba(255, 255, 255, 0.95);
+        }
+
+        body { 
+            background-color: var(--bg-body); 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            color: #334155;
+            line-height: 1.6;
+        }
+
+        /* Hero Header Modern */
+        .brand-header { 
+            background: linear-gradient(135deg, #0f172a 0%, #1e40af 100%), 
+                        url('https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?q=80&w=2021&auto=format&fit=crop');
+            background-blend-mode: overlay;
+            background-size: cover;
+            background-position: center;
+            color: white; 
+            padding: 80px 0 120px 0; 
+            text-align: center; 
+            clip-path: polygon(0 0, 100% 0, 100% 85%, 0% 100%);
+        }
+
+        .brand-header h1 {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            letter-spacing: -2px;
+            text-transform: uppercase;
+            font-size: 3.5rem;
+            margin-bottom: 0;
+            text-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+
+        /* Card System */
+        .main-card { 
+            border: none; 
+            border-radius: 30px; 
+            box-shadow: 0 20px 50px rgba(0,0,0,0.05); 
+            background: var(--glass-white);
+            backdrop-filter: blur(10px);
+            margin-top: -60px;
+            padding: 40px;
+        }
+
+        .section-header { 
+            font-size: 0.85rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--accent-blue); 
+            font-weight: 800; 
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .section-header::after {
+            content: "";
+            height: 2px;
+            background: linear-gradient(90deg, #e2e8f0, transparent);
+            flex-grow: 1;
+        }
+
+        /* Inputs */
+        .form-label { font-weight: 700; font-size: 0.8rem; color: #64748b; margin-bottom: 8px; }
+        .form-control, .form-select {
+            border-radius: 12px;
+            padding: 14px 18px;
+            border: 1px solid #e2e8f0;
+            background-color: #f8fafc;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+
+        .form-control:focus, .form-select:focus {
+            background-color: #fff;
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+        }
+
+        /* Destination Accordion Modern */
+        .city-box { 
+            background: #fff; 
+            border-radius: 16px; 
+            border: 1px solid #e2e8f0; 
+            margin-bottom: 12px; 
+            transition: all 0.3s ease;
+        }
+
+        .city-name { 
+            padding: 18px 25px; 
+            font-weight: 700; 
+            color: var(--primary-dark); 
+            cursor: pointer; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+        }
+
+        .city-name::after {
+            content: '↓';
+            font-size: 1.2rem;
+            color: #cbd5e1;
+            transition: 0.3s;
+        }
+
+        .city-box.active { border-color: var(--accent-blue); }
+        .city-box.active .city-name::after { transform: rotate(180deg); color: var(--accent-blue); }
+
+        .city-box.has-checked {
+            background: #f0f7ff;
+            border-left: 6px solid var(--accent-blue);
+        }
+
+        .dest-grid { 
+            display: none; 
+            padding: 0 25px 25px 25px; 
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); 
+            gap: 12px; 
+        }
+        .city-box.active .dest-grid { display: grid; }
+
+        .dest-item { 
+            background: #fff; 
+            padding: 15px; 
+            border-radius: 12px; 
+            border: 1px solid #e2e8f0; 
+            display: flex; 
+            align-items: flex-start; 
+            transition: 0.2s;
+            cursor: pointer;
+        }
+
+        .dest-item:hover { border-color: var(--accent-blue); }
+        .dest-item:has(input:checked) {
+            border-color: var(--accent-blue);
+            background: #eff6ff;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.1);
+        }
+
+        .dest-item input { margin-top: 4px; margin-right: 12px; accent-color: var(--accent-blue); }
+        .dest-label { font-weight: 700; font-size: 0.9rem; color: var(--primary-dark); }
+        .opt-text { font-size: 0.75rem; color: #64748b; font-weight: 400; display: block; }
+
+        /* Sidebar Result */
+        .sticky-result { position: sticky; top: 20px; }
+        .total-banner { 
+            background: var(--primary-dark); 
+            color: white; 
+            padding: 40px; 
+            border-radius: 30px; 
+            overflow: hidden;
+            position: relative;
+        }
+
+        .total-banner::before {
+            content: "";
+            position: absolute;
+            top: -50px; right: -50px;
+            width: 150px; height: 150px;
+            background: var(--accent-blue);
+            filter: blur(80px);
+            opacity: 0.4;
+        }
+
+        .price-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 2px; opacity: 0.7; font-weight: 700; }
+        .price-text { font-size: 2.8rem; font-weight: 800; color: #fff; margin: 10px 0; font-family: 'Outfit'; }
+        
+        .info-panel { 
+            background: rgba(255,255,255,0.08); 
+            padding: 20px; 
+            border-radius: 20px; 
+            margin-top: 25px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .btn-unlock {
+            display: block;
+            text-align: center;
+            font-size: 0.7rem;
+            color: var(--accent-cyan);
+            cursor: pointer;
+            margin-bottom: 15px;
+            font-weight: 800;
+            letter-spacing: 1px;
+        }
+
+        .btn-print {
+            background: linear-gradient(135deg, var(--accent-blue), #1d4ed8);
+            border: none;
+            padding: 18px;
+            font-weight: 700;
+            border-radius: 16px;
+            color: white;
+            transition: 0.3s;
+            box-shadow: 0 10px 20px rgba(37, 99, 235, 0.3);
+            width: 100%;
+        }
+
+        .btn-print:hover { transform: translateY(-3px); box-shadow: 0 15px 25px rgba(37, 99, 235, 0.4); }
+
+        /* Secret Data Area */
+        .secret-data { display: none; border-top: 1px dashed rgba(255,255,255,0.2); padding-top: 15px; }
+
+        /* PRINT SETTINGS */
+        @media print {
+            .no-print, .brand-header, .btn-unlock, input, select, textarea, .btn { display: none !important; }
+            body { background: white !important; padding: 0; }
+            .container { max-width: 100% !important; width: 100% !important; margin: 0 !important; }
+            .col-lg-8, .col-lg-4 { width: 100% !important; display: block !important; }
+            .main-card { box-shadow: none !important; margin: 0 !important; padding: 20px !important; }
+            .city-box:not(.has-checked) { display: none !important; }
+            .dest-item:not(:has(input:checked)) { display: none !important; }
+            .dest-grid { display: grid !important; grid-template-columns: 1fr 1fr !important; }
+            .total-banner { background: white !important; color: black !important; padding: 0; border-top: 2px solid #000; margin-top: 30px; border-radius: 0; }
+            .price-text { color: black !important; font-size: 3rem; }
+            .info-panel { background: #f8fafc !important; color: black !important; border: 1px solid #e2e8f0; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="brand-header no-print">
+    <h1>HAVIST TRAVELLER</h1>
+    <p class="opacity-75 fw-medium">The Art of Professional Journey Planning</p>
+</div>
+
+<div class="container mb-5">
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <div class="main-card card">
+                <div class="section-header">Konfigurasi Perjalanan</div>
+                <div class="row g-4 mb-5">
+                    <div class="col-md-6">
+                        <label class="form-label">TANGGAL KEBERANGKATAN</label>
+                        <input type="date" id="tglBerangkat" class="form-control" onchange="hitung()">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">ARMADA TRANSPORTASI</label>
+                        <select id="transportSelect" class="form-select" onchange="hitung()">
+                            <option value="2500000">ELF (14-19 Seat)</option>
+                            <option value="2700000" selected>HIACE (14 Seat)</option>
+                            <option value="4000000">MEDIUM BUS (31-35 Seat)</option>
+                            <option value="6000000">BIG BUS (45 Seat + Toilet)</option>                            
+                            <option value="6000000">BIG BUS (50 Seat)</option>
+                            <option value="6000000">BIG BUS (59 Seat)</option>                            
+                            <option value="6500000">BIG BUS LEGRES (32 Seat)</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">TOTAL PESERTA (PAX)</label>
+                        <input type="number" id="peserta" class="form-control" value="50" oninput="hitung()">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">DURASI (MALAM INAP)</label>
+                        <input type="number" id="malam" class="form-control" value="1" oninput="hitung()">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">KONFIGURASI KAMAR</label>
+                        <select id="roomShare" class="form-select" onchange="hitung()">
+                            <option value="4">Quad Share (Isi 4)</option>
+                            <option value="2">Twin Share (Isi 2)</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label text-primary">FREKUENSI MAKAN</label>
+                        <div class="input-group">
+                            <input type="number" id="makanFreq" class="form-control" value="3" oninput="hitung()">
+                            <span class="input-group-text bg-white">Kali</span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label text-primary">BUDGET MAKAN (PER PAX)</label>
+                        <input type="number" id="makanPrice" class="form-control" value="35000" oninput="hitung()">
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label">AKOMODASI HOTEL</label>
+                        <select id="hotelSelect" class="form-select" onchange="hitung()">
+                                    <option value="0|0">-- Tanpa Hotel / Pilih Nanti --</option>
+
+                <optgroup label="BANTEN">
+                    <option value="200000|300000">THE WEST COVE HOTEL (B3)</option>
+                    <option value="200000|300000">PATRA ANYER HOTEL(B3)</option>
+                    <option value="300000|400000">MARBELLA PLACE ANYER (B4) </option>
+                    <option value="300000|400000">LE DIAN HOTEL(B4) </option>
+                </optgroup>
+
+                <optgroup label="BANDUNG - BINTANG 3">
+                    <option value="450000|650000">Ibis Trans Studio</option>
+                    <option value="200000|300000">V HOTEL & RESIDENT</option>
+                    <option value="200000|300000">GRAND SOVIA HOTEL</option>
+                    <option value="200000|300000">GRAND PASIFIC HOTEL</option>
+                    <option value="200000|300000">FAVEHOTEL BRAGA</option>
+                    <option value="150000|150000">Villa</option>
+                    <option value="200000|200000">Cottage</option>
+                    <option value="200000|200000">Glamping</option>
+                    <option value="150000|150000">Camp</option>
+                </optgroup>
+
+                <optgroup label="BANDUNG - BINTANG 4">
+                    <option value="350000|450000">EL HOTEL</option>
+                    <option value="600000|900000">Sensa Hotel</option>
+                </optgroup>
+
+                <optgroup label="KUNINGAN - JAWA BARAT">
+                    <option value="200000|300000">GRAND CORDELA AS PUTRA </option>
+                    <option value="200000|300000">DE JEHAN'S HOTEL</option>
+                    <option value="300000|400000">THE ICON HOTEL KUNINGAN (B4) </option>
+                    <option value="300000|400000">HOTEL SANTIKA PREMIERE LINGGARJATI (B4) </option>
+                </optgroup>
+
+
+                <optgroup label="YOGYAKARTA - BINTANG 3">
+                    <option value="170000|225900">Front One</option>
+                    <option value="170000|225900">The Cube</option>
+                    <option value="170000|225900">Agung Mas</option>
+                    <option value="170000|225900">Top Hotel</option>
+                    <option value="170000|225900">Sare Hotel</option>
+                    <option value="170000|225900">Emersia</option>
+                    <option value="170000|225900">Kangen Hotel</option>
+                    <option value="170000|225900">Whiz Malioboro</option>
+                </optgroup>
+
+
+                <optgroup label="YOGYAKARTA - BINTANG 4">
+                    <option value="300000|375000">Merapi Merbabu</option>
+                    <option value="300000|375000">SM Tower</option>
+                    <option value="300000|375000">Neo Hotel</option>
+                    <option value="300000|375000">Novotel</option>
+                    <option value="300000|375000">The 101</option>
+                    <option value="300000|375000">Best City</option>
+                    <option value="300000|375000">Royal Malioboro</option>
+                    <option value="300000|375000">Grand Zuri</option>
+                    <option value="300000|375000">éL Hotel Yogyakarta</option>
+                    <option value="300000|375000">CAVINTON HOTEL</option>
+                    <option value="300000|375000">GALLERY PRAWIROTAMAN</option>
+                    <option value="300000|375000">THE VICTORIA</option>
+                </optgroup>
+
+                <optgroup label="DIENG, JAWA TENGAH">
+                    <option value="150000|200000">BOSCO DIENG VILLA</option>
+                    <option value="150000|200000">QUEEN VILLA SIKUNIR</option>
+                    <option value="150000|200000">TANI HOUSE CABIN</option>
+                    <option value="150000|200000">HOMESTAY ARJUNA DIENG</option>
+                </optgroup>
+
+                <optgroup label="MALANG, JAWA TIMUR - BINTANG 3">
+                    <option value="200000|300000">HOTEL CRYSTAL INN</option>
+                    <option value="200000|300000">LAVA VIEW LODGE HOTEL</option>
+                    <option value="200000|300000">TRIPLETREE CIPTANINGATI CULTURE </option>
+                </optgroup>
+
+                <optgroup label="MALANG, JAWA TIMUR - BINTANG 4">
+                    <option value="200000|300000">KUSUMA AGROWISATA RESORT & CONVENTION</option>
+                    <option value="200000|300000">THE BATU HOTEL</option>
+                    <option value="200000|300000">THE KALLEA VILLA</option>
+                </optgroup>
+
+                <optgroup label="BALI - BINTANG 3">
+                    <option value="200000|300000">PRIMEBIZ HOTEL KUTA</option>
+                    <option value="200000|300000">MAXONE HOTEL BUKIT JIMBARAN</option>
+                    <option value="200000|300000">PURI PADMA HOTEL</option>
+                    <option value="200000|300000">SERELA LEGIAN HOTEL</option>
+                </optgroup>
+
+                <optgroup label="BALI - BINTANG 4">
+                    <option value="300000|400000">ASTON CANGGU BEACH RESORT</option>
+                    <option value="300000|400000">HOTEL SANTIKA SILIGITA NUSA DUA JIMBARAN</option>
+                    <option value="300000|400000">GRAND ISTANA RAMA HOTEL</option>
+                    <option value="300000|400000">PADMASARI RESORT HOTEL</option>
+                </optgroup>
+
+            </select>
+                    </div>
+                </div>
+
+                <div class="section-header">Pilihan Destinasi Wisata</div>
+                
+                <div class="city-box" onclick="this.classList.toggle('active')">
+                    <div class="city-name">BANTEN</div>
+                    <div class="dest-grid" onclick="event.stopPropagation()">
+                        <label class="dest-item"><input type="checkbox" class="dest" data-price="30000" onchange="hitung()"><span>Bukit Waruwangi<span class="opt-text">Team Building / Outbound</span></span></label>
+                        <label class="dest-item"><input type="checkbox" class="dest" data-price="50000" onchange="hitung()"><span>Anyer Wonderland<span class="opt-text">Wahana ATV</span></span></label>
+                        <label class="dest-item"><input type="checkbox" class="dest" data-price="35000" onchange="hitung()"><span>The Nice Ocean<span class="opt-text">Wahana Jetski</span></span></label>
+                        <label class="dest-item"><input type="checkbox" class="dest" data-price="20000" onchange="hitung()"><span>Mercusuar Anyer<span class="opt-text">Wisata Edukasi Sejarah</span></span></label>
+                        <label class="dest-item"><input type="checkbox" class="dest" data-price="10000" onchange="hitung()"><span>Baduy<span class="opt-text">Tracking Alam</span></span></label>
+                        <label class="dest-item"><input type="checkbox" class="dest" data-price="10000" onchange="hitung()"><span>Museum Banten<span class="opt-text">Tour Museum</span></span></label>
+                    </div>
+                </div>
+
+                <div class="city-box" onclick="this.classList.toggle('active')">
+                    <div class="city-name">JAKARTA</div>
+                    <div class="dest-grid" onclick="event.stopPropagation()">
+                     <label class="dest-item"><input type="checkbox" class="dest" data-price="15000" onchange="hitung()"><span>Jakarta Museum<span class="opt-text">Sepeda Ontel</span></span></label>
+                    <label class="dest-item"><input type="checkbox" class="dest" data-price="4000" onchange="hitung()"><span>Ragunan/Monas<span class="opt-text">Edukasi Satwa</span></span></label>
+                    <label class="dest-item"><input type="checkbox" class="dest" data-price="24000" onchange="hitung()"><span>Monumen Nasional<span class="opt-text">Naik Puncak Monas</span></span></label>
+                    <label class="dest-item"><input type="checkbox" class="dest" data-price="30000" onchange="hitung()"><span>TMII<span class="opt-text">Museum</span></span></label>
+                    <label class="dest-item"><input type="checkbox" class="dest" data-price="60000" onchange="hitung()"><span>TMII<span class="opt-text">Kereta Gantung</span></span></label>
+                    <label class="dest-item"><input type="checkbox" class="dest" data-price="50000" onchange="hitung()"><span>TMII<span class="opt-text">Teater IMAX Keong Emas</span></span></label>
+                    <label class="dest-item"><input type="checkbox" class="dest" data-price="10000" onchange="hitung()"><span>TMII<span class="opt-text">Bayt Qur'an & Museum Istiqlal</span></span></label>
+                    <label class="dest-item"><input type="checkbox" class="dest" data-price="90000" onchange="hitung()"><span>TMII<span class="opt-text">Sky World</span></span></label>
+                    <label class="dest-item"><input type="checkbox" class="dest" data-price="27500" onchange="hitung()"><span>TMII<span class="opt-text">PP IPTEK</span></span></label>
+                    <label class="dest-item"><input type="checkbox" class="dest" data-price="20000" onchange="hitung()"><span>TMII<span class="opt-text">Museum Listrik & Energi Baru</span></span></label>
+                    <label class="dest-item"><input type="checkbox" class="dest" data-price="5000" onchange="hitung()"><span>TMII<span class="opt-text">Museum Prangko Pos</span></span></label>
+                    <label class="dest-item"><input type="checkbox" class="dest" data-price="10000" onchange="hitung()"><span>TMII<span class="opt-text">Museum Transportasi</span></span></label>
+                    <label class="dest-item"><input type="checkbox" class="dest" data-price="5000" onchange="hitung()"><span>TMII<span class="opt-text">Museum Keprajuritan</span></span></label>
+                    <label class="dest-item"><input type="checkbox" class="dest" data-price="30000" onchange="hitung()"><span>TMII<span class="opt-text">Taman Burung</span></span></label>
+                    <label class="dest-item"><input type="checkbox" class="dest" data-price="25000" onchange="hitung()"><span>TMII<span class="opt-text">Taman Reptil & Museum Komodo</span></span></label>
+                    <label class="dest-item"><input type="checkbox" class="dest" data-price="35000" onchange="hitung()"><span>TMII<span class="opt-text">Dunia Air Tawar & Serangga</span></span></label>
+                    <label class="dest-item"><input type="checkbox" class="dest" data-price="10000" onchange="hitung()"><span>TMII<span class="opt-text">Museum & Galeri</span></span></label>
+                    <label class="dest-item"><input type="checkbox" class="dest" data-price="25000" onchange="hitung()"><span>TMII<span class="opt-text">Kereta Mini & Zona Rekreasi</span></span></label>
+                    <label class="dest-item"><input type="checkbox" class="dest" data-price="175000" onchange="hitung()"><span>Ancol<span class="opt-text">Sea World Ancol</span></span></label>
+                    <label class="dest-item"><input type="checkbox" class="dest" data-price="400000" onchange="hitung()"><span>Ancol<span class="opt-text">Dunia Fantasi (Dufan)</span></span></label>
+                    <label class="dest-item"><input type="checkbox" class="dest" data-price="150000" onchange="hitung()"><span>Ancol<span class="opt-text">Atlantis Water Adventure</span></span></label>
+                    <label class="dest-item"><input type="checkbox" class="dest" data-price="150000" onchange="hitung()"><span>Ancol<span class="opt-text">Ocean Dream Samudra</span></span></label>
+                    <label class="dest-item"><input type="checkbox" class="dest" data-price="100000" onchange="hitung()"><span>Ancol<span class="opt-text">Jakarta Bird Land/Fauna Land</span></span></label>
+                    <label class="dest-item"><input type="checkbox" class="dest" data-price="350000" onchange="hitung()"><span>Kidzania<span class="opt-text">Aktivitas Profesi</span></span></label>
+                  </div>
+                </div>
+                <div class="city-box" onclick="this.classList.toggle('active')">
+                    <div class="city-name">BOGOR</div>
+                    <div class="dest-grid" onclick="event.stopPropagation()">
+                          <label class="dest-item"><input type="checkbox" class="dest" data-price="10000" onchange="hitung()"><span>Museum Munasain<span class="opt-text">Edukasi Sains</span></span></label>
+                        <label class="dest-item"><input type="checkbox" class="dest" data-price="15000" onchange="hitung()"><span>Museum Zoologi<span class="opt-text">Edukasi Biologi</span></span></label>
+                        <label class="dest-item"><input type="checkbox" class="dest" data-price="20000" onchange="hitung()"><span>Taman Edukasi Perikanan<span class="opt-text">Edukasi Ikan</span></span></label>
+                        <label class="dest-item"><input type="checkbox" class="dest" data-price="35000" onchange="hitung()"><span>Chevilly<span class="opt-text">Spot Foto Eropa</span></span></label>
+                        <label class="dest-item"><input type="checkbox" class="dest" data-price="250000" onchange="hitung()"><span>Jungleland<span class="opt-text">Wahana Permainan</span></span></label>
+                        <label class="dest-item"><input type="checkbox" class="dest" data-price="26000" onchange="hitung()"><span>Kebun Raya Bogor<span class="opt-text">Edukasi Botani</span></span></label>
+                        <label class="dest-item"><input type="checkbox" class="dest" data-price="10000" onchange="hitung()"><span>Balitro<span class="opt-text">Edukasi Tanaman</span></span></label>
+                        <label class="dest-item"><input type="checkbox" class="dest" data-price="10000" onchange="hitung()"><span>Museum PETA<span class="opt-text">Sejarah Perjuangan</span></span></label>
+                        <label class="dest-item"><input type="checkbox" class="dest" data-price="10000" onchange="hitung()"><span>Kunjungan Yakult<span class="opt-text">Edukasi Industri</span></span></label>
+                        <label class="dest-item"><input type="checkbox" class="dest" data-price="10000" onchange="hitung()"><span>Kunjungan Pocari Sweat<span class="opt-text">Edukasi Industri</span></span></label>
+                        <label class="dest-item"><input type="checkbox" class="dest" data-price="35000" onchange="hitung()"><span>Nicolas<span class="opt-text">Destinasi Wisata</span></span></label>
+                        <label class="dest-item"><input type="checkbox" class="dest" data-price="150000" onchange="hitung()"><span>Taman Safari<span class="opt-text">Konservasi Satwa</span></span></label>
+                        <label class="dest-item"><input type="checkbox" class="dest" data-price="25000" onchange="hitung()"><span>Gunung Mas<span class="opt-text">Wisata Kebun Teh</span></span></label>
+                        <label class="dest-item"><input type="checkbox" class="dest" data-price="25000" onchange="hitung()"><span>Kebun Raya Cibodas<span class="opt-text">Puncak</span></span></label>
+                        <label class="dest-item"><input type="checkbox" class="dest" data-price="40000" onchange="hitung()"><span>Mini Mania<span class="opt-text">Taman Miniatur</span></span></label>
+                        <label class="dest-item"><input type="checkbox" class="dest" data-price="45000" onchange="hitung()"><span>Cimory Dairyland<span class="opt-text">Wisata Keluarga</span></span></label>
+                </div>
+            </div>
+                <div class="city-box" onclick="this.classList.toggle('active')">
+                    <div class="city-name">SUBANG</div>
+                    <div class="dest-grid" onclick="event.stopPropagation()">
+                        <label class="dest-item"><input type="checkbox" class="dest" data-price="85000" onchange="hitung()"><span>Sari Ater Hot Spring<span class="opt-text">Ciater</span></span></label>
+                        <label class="dest-item"><input type="checkbox" class="dest" data-price="80000" onchange="hitung()"><span>Florawisata D'Castello<span class="opt-text">Ciater</span></span></label>
+                        <label class="dest-item"><input type="checkbox" class="dest" data-price="40000" onchange="hitung()"><span>The Ranch Ciater<span class="opt-text">Ciater</span></span></label>
+                        <label class="dest-item"><input type="checkbox" class="dest" data-price="10000" onchange="hitung()"><span>Curug Cibareubeuy<span class="opt-text">Ciater</span></span></label>
+                        <label class="dest-item"><input type="checkbox" class="dest" data-price="10000" onchange="hitung()"><span>Curug Cileat<span class="opt-text">Cisalak</span></span></label>
+                        <label class="dest-item"><input type="checkbox" class="dest" data-price="5000" onchange="hitung()"><span>Kebun The Ciater<span class="opt-text">Ciater</span></span></label>
+                        <label class="dest-item"><input type="checkbox" class="dest" data-price="10000" onchange="hitung()"><span>Bumi Telaga Sundayana<span class="opt-text">Jalancagak</span></span></label>
+                        <label class="dest-item"><input type="checkbox" class="dest" data-price="15000" onchange="hitung()"><span>Planet Waterboom<span class="opt-text">Subang Kota</span></span></label>
+                        <label class="dest-item"><input type="checkbox" class="dest" data-price="70000" onchange="hitung()"><span>Museum Daerah Subang<span class="opt-text">Subang</span></span></label>
+                </div>
+            </div>
+                <div class="city-box" onclick="this.classList.toggle('active')">
+                    <div class="city-name">SUKABUMI</div>
+                    <div class="dest-grid" onclick="event.stopPropagation()">
+                <label class="dest-item"><input type="checkbox" class="dest" data-price="15000" onchange="hitung()"><span>Geopark Ciletuh<span class="opt-text">Ciemas</span></span></label>
+                <label class="dest-item"><input type="checkbox" class="dest" data-price="10000" onchange="hitung()"><span>Curug Cikaso<span class="opt-text">Cibitung</span></span></label>
+                <label class="dest-item"><input type="checkbox" class="dest" data-price="10000" onchange="hitung()"><span>Curug Sawer<span class="opt-text">Cidahu</span></span></label>
+                <label class="dest-item"><input type="checkbox" class="dest" data-price="20000" onchange="hitung()"><span>Situ Gunung<span class="opt-text">Kadudampit</span></span></label>
+                <label class="dest-item"><input type="checkbox" class="dest" data-price="10000" onchange="hitung()"><span>Pantai Ujung Genteng<span class="opt-text">Ciracap</span></span></label>
+                <label class="dest-item"><input type="checkbox" class="dest" data-price="10000" onchange="hitung()"><span>Pantai Palahanratu<span class="opt-text">Palabuhanratu</span></span></label>
+                <label class="dest-item"><input type="checkbox" class="dest" data-price="70000" onchange="hitung()"><span>Santasea Waterpark<span class="opt-text">Sukabumi Kota</span></span></label>
+                <label class="dest-item"><input type="checkbox" class="dest" data-price="40000" onchange="hitung()"><span>Goalpara Tea Park<span class="opt-text">Cisarua</span></span></label>
+                <label class="dest-item"><input type="checkbox" class="dest" data-price="15000" onchange="hitung()"><span>Danau Bacan<span class="opt-text">Cisaat</span></span></label>
+                <label class="dest-item"><input type="checkbox" class="dest" data-price="15000" onchange="hitung()"><span>Taman Rekreasi Selebintana<span class="opt-text">Sukabumi</span></span></label>
+                <label class="dest-item"><input type="checkbox" class="dest" data-price="35000" onchange="hitung()"><span>Heha Waterfall<span class="opt-text">Wisata Air Terjun Modern</span></span></label>
+                <label class="dest-item"><input type="checkbox" class="dest" data-price="100000" onchange="hitung()"><span>Situgunung<span class="opt-text">Suspension Bridge & Danau</span></span></label>
+                <label class="dest-item"><input type="checkbox" class="dest" data-price="150000" onchange="hitung()"><span>Rafting Caldera<span class="opt-text">Arung Jeram Sungai</span></span></label>
+                </div>
+            </div>
+
+            <div class="city-box" onclick="this.classList.toggle('active')">
+                <div class="city-name">BANDUNG</div>
+                <div class="dest-grid" onclick="event.stopPropagation()">
+                <label class="dest-item"><input type="checkbox" class="dest" data-price="5000" onchange="hitung()"><span>Museum Geologi<span class="opt-text">Edukasi Geologi</span></span></label>
+                <label class="dest-item"><input type="checkbox" class="dest" data-price="30000" onchange="hitung()"><span>Puspa IPTEK<span class="opt-text">Edukasi Sains</span></span></label>
+                <label class="dest-item"><input type="checkbox" class="dest" data-price="150000" onchange="hitung()"><span>Saung Udjo<span class="opt-text">Workshop Angklung & Budaya</span></span></label>
+                <label class="dest-item"><input type="checkbox" class="dest" data-price="0" onchange="hitung()"><span>Masjid Al Jabbar<span class="opt-text">Wisata Religi (Gratis)</span></span></label>
+
+                <label class="dest-item"><input type="checkbox" class="dest" data-price="80000" onchange="hitung()"><span>Sari Ater<span class="opt-text">Pemandian Air Panas</span></span></label>
+                <label class="dest-item"><input type="checkbox" class="dest" data-price="30000" onchange="hitung()"><span>Kawah Putih<span class="opt-text">Foto Alam</span></span></label>
+                <label class="dest-item"><input type="checkbox" class="dest" data-price="25000" onchange="hitung()"><span>Situ Patenggang<span class="opt-text">Perahu Danau</span></span></label>
+                <label class="dest-item"><input type="checkbox" class="dest" data-price="40000" onchange="hitung()"><span>Rancabali Tea Plantation<span class="opt-text">Pemandangan Kebun Teh</span></span></label>
+                <label class="dest-item"><input type="checkbox" class="dest" data-price="15000" onchange="hitung()"><span>Wayang Windu<span class="opt-text">Trekking Ringan</span></span></label>
+                <label class="dest-item"><input type="checkbox" class="dest" data-price="10000" onchange="hitung()"><span>Wisata Alam & Spot Outdoor<span class="opt-text">Spot Sunrise/Sunset</span></span></label>
+
+                <label class="dest-item"><input type="checkbox" class="dest" data-price="300000" onchange="hitung()"><span>Trans Studio Bandung<span class="opt-text">Wahana & Hiburan Indoor</span></span></label>
+                <label class="dest-item"><input type="checkbox" class="dest" data-price="60000" onchange="hitung()"><span>Floating Market Lembang<span class="opt-text">Taman Hiburan</span></span></label>
+                <label class="dest-item"><input type="checkbox" class="dest" data-price="50000" onchange="hitung()"><span>Great Asia Africa<span class="opt-text">Edukasi Budaya & Foto Kostum</span></span></label>
+                <label class="dest-item"><input type="checkbox" class="dest" data-price="40000" onchange="hitung()"><span>Jans Park Jatinangor<span class="opt-text">Istana Warna-Warni</span></span></label>
+                <label class="dest-item"><input type="checkbox" class="dest" data-price="30000" onchange="hitung()"><span>D'Castello<span class="opt-text">Spot Foto</span></span></label>
+                <label class="dest-item"><input type="checkbox" class="dest" data-price="70000" onchange="hitung()"><span>JasnPark Terusan<span class="opt-text">Edukasi Satwa</span></span></label>
+
+                <label class="dest-item"><input type="checkbox" class="dest" data-price="30000" onchange="hitung()"><span>Dusun Bambu<span class="opt-text">Kuliner & Alam</span></span></label>
+                <label class="dest-item"><input type="checkbox" class="dest" data-price="25000" onchange="hitung()"><span>Petik Strawberry<span class="opt-text">Petik Buah</span></span></label>
+                <label class="dest-item"><input type="checkbox" class="dest" data-price="250000" onchange="hitung()"><span>Rafting Situ Cileunca<span class="opt-text">Arung Jeram</span></span></label>
+                <label class="dest-item"><input type="checkbox" class="dest" data-price="250000" onchange="hitung()"><span>Flying Fox<span class="opt-text">Wahana Adrenalin</span></span></label>
+                <label class="dest-item"><input type="checkbox" class="dest" data-price="40000" onchange="hitung()"><span>Grafika Cikole Outbound<span class="opt-text">Paintball</span></span></label>
+                <label class="dest-item"><input type="checkbox" class="dest" data-price="150000" onchange="hitung()"><span>Rafting Pangalengan<span class="opt-text">Arung Jeram Sungai</span></span></label>
+                <label class="dest-item"><input type="checkbox" class="dest" data-price="25000" onchange="hitung()"><span>Flying Pangalengan Fox<span class="opt-text">Wahana Adrenalin</span></span></label>
+                <label class="dest-item"><input type="checkbox" class="dest" data-price="75000" onchange="hitung()"><span>Atv Pangalengan<span class="opt-text">Eksplorasi Kebun Teh</span></span></label>
+                <label class="dest-item"><input type="checkbox" class="dest" data-price="250000" onchange="hitung()"><span>Jeep Landcauser Pangalengan<span class="opt-text">Offroad Adventure</span></span></label>
+                <label class="dest-item"><input type="checkbox" class="dest" data-price="25000" onchange="hitung()"><span>Taman Langit Pangalengan<span class="opt-text">Sunrise Point</span></span></label>
+                </div>
+           </div>
+            <div class="city-box" onclick="this.classList.toggle('active')">
+                <div class="city-name">JOGJA</div>
+                <div class="dest-grid" onclick="event.stopPropagation()">
+    	<label class="dest-item"><input type="checkbox" class="dest" data-price="5000" onchange="hitung()"><span>Museum Vredeburg<span class="opt-text">Tour Museum</span></span></label>
+        <label class="dest-item"><input type="checkbox" class="dest" data-price="10000" onchange="hitung()"><span>Hutan Pinus Pengger<span class="opt-text">Spot Foto</span></span></label>
+        <label class="dest-item"><input type="checkbox" class="dest" data-price="15000" onchange="hitung()"><span>Kraton Yogyakarta<span class="opt-text">Wisata Budaya</span></span></label>
+        <label class="dest-item"><input type="checkbox" class="dest" data-price="0" onchange="hitung()"><span>Malioboro<span class="opt-text">Kuliner (Gratis)</span></span></label>
+        <label class="dest-item"><input type="checkbox" class="dest" data-price="50000" onchange="hitung()"><span>Goa Pindul<span class="opt-text">Cavé Tubing</span></span></label>
+        <label class="dest-item"><input type="checkbox" class="dest" data-price="50000" onchange="hitung()"><span>Candi Prambanan<span class="opt-text">Wisata Sejarah</span></span></label>
+        <label class="dest-item"><input type="checkbox" class="dest" data-price="10000" onchange="hitung()"><span>Tebing Breksi<span class="opt-text">Spot Foto Alam</span></span></label>
+        <label class="dest-item"><input type="checkbox" class="dest" data-price="50000" onchange="hitung()"><span>Candi Borobudur<span class="opt-text">Edukasi Sejarah</span></span></label>
+        <label class="dest-item"><input type="checkbox" class="dest" data-price="30000" onchange="hitung()"><span>Obelix Sea View<span class="opt-text">Foto Panorama</span></span></label>
+        <label class="dest-item"><input type="checkbox" class="dest" data-price="10000" onchange="hitung()"><span>Pinus Mangunan<span class="opt-text">Gardu Pandang</span></span></label>
+        <label class="dest-item"><input type="checkbox" class="dest" data-price="450000" onchange="hitung()"><span>Lava Tour Merapi<span class="opt-text">Jeep Adventure</span></span></label>
+                </div>
+            </div>
+            <div class="city-box" onclick="this.classList.toggle('active')">
+                <div class="city-name">DIENG & JOGJA</div>
+                <div class="dest-grid" onclick="event.stopPropagation()">
+        <label class="dest-item"><input type="checkbox" class="dest" data-price="15000" onchange="hitung()"><span>Sunrise Sikunir<span class="opt-text">Foto Alam</span></span></label>
+        <label class="dest-item"><input type="checkbox" class="dest" data-price="10000" onchange="hitung()"><span>Bukit Ratapan Angin<span class="opt-text">Panorama Telaga Warna</span></span></label>
+        <label class="dest-item"><input type="checkbox" class="dest" data-price="20000" onchange="hitung()"><span>Kawah Sikidang<span class="opt-text">Edukasi Geologi</span></span></label>
+        <label class="dest-item"><input type="checkbox" class="dest" data-price="10000" onchange="hitung()"><span>Pinus Mangunan<span class="opt-text">Spot Foto</span></span></label>
+        <label class="dest-item"><input type="checkbox" class="dest" data-price="20000" onchange="hitung()"><span>Candi Arjuna<span class="opt-text">Wisata Sejarah</span></span></label>
+        <label class="dest-item"><input type="checkbox" class="dest" data-price="450000" onchange="hitung()"><span>Lava Tour / Gumuk Pasir<span class="opt-text">Jeep</span></span></label>
+        <label class="dest-item"><input type="checkbox" class="dest" data-price="150000" onchange="hitung()"><span>Rafting Elo<span class="opt-text">Arung Jeram</span></span></label>
+               </div>  
+            </div>
+            <div class="city-box" onclick="this.classList.toggle('active')">
+                <div class="city-name">MALANG & BROMO</div>
+                <div class="dest-grid" onclick="event.stopPropagation()">
+        <label class="dest-item"><input type="checkbox" class="dest" data-price="350000" onchange="hitung()"><span>Bromo Sunrise<span class="opt-text">Menikmati Sunrise</span></span></label>
+        <label class="dest-item"><input type="checkbox" class="dest" data-price="40000" onchange="hitung()"><span>Petik Apel<span class="opt-text">Wisata Kebun</span></span></label>
+                </div>
+            </div>
+            <div class="city-box" onclick="this.classList.toggle('active')">
+                <div class="city-name">BALI</div>
+                <div class="dest-grid" onclick="event.stopPropagation()">
+        <label class="dest-item"><input type="checkbox" class="dest" data-price="25000" onchange="hitung()"><span>Pantai Pandawa<span class="opt-text">Wisata Pantai</span></span></label>
+        <label class="dest-item"><input type="checkbox" class="dest" data-price="15000" onchange="hitung()"><span>Pantai Melasti<span class="opt-text">Foto Tebing</span></span></label>
+        <label class="dest-item"><input type="checkbox" class="dest" data-price="300000" onchange="hitung()"><span>Gala Dinner Jimbaran<span class="opt-text">Makan Seafood</span></span></label>
+        <label class="dest-item"><input type="checkbox" class="dest" data-price="60000" onchange="hitung()"><span>Tanah Lot<span class="opt-text">Wisata Pura</span></span></label>
+        <label class="dest-item"><input type="checkbox" class="dest" data-price="75000" onchange="hitung()"><span>Bedugul<span class="opt-text">Wisata Danau</span></span></label>
+        <label class="dest-item"><input type="checkbox" class="dest" data-price="50000" onchange="hitung()"><span>Desa Panglipuran<span class="opt-text">Wisata Budaya</span></span></label>
+        <label class="dest-item"><input type="checkbox" class="dest" data-price="150000" onchange="hitung()"><span>Tari Kecak<span class="opt-text">Pertunjukan</span></span></label>
+        <label class="dest-item"><input type="checkbox" class="dest" data-price="0" onchange="hitung()"><span>Oleh Oleh Joger<span class="opt-text">Belanja (Gratis)</span></span></label>
+                </div>
+            </div>
+
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <label class="form-label text-primary">MERCHANDISE / ATRIBUT</label>
+                        <select id="kaosSelect" class="form-select" onchange="hitung()">
+                            <option value="0">-- Tanpa Kaos --</option>
+                            <option value="50000">Kaos Cotton Combed 30s Pendek</option>
+                            <option value="70000">Kaos Cotton Combed 24s Full Color</option>
+                        </select>
+                    </div>
+                    <div class="col-12 mt-4 no-print">
+                        <label class="form-label">CATATAN KHUSUS</label>
+                        <textarea id="catatanInput" class="form-control" rows="3" placeholder="Contoh: Request menu vegetarian, warna kaos biru, dsb..." oninput="hitung()"></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="sticky-result">
+                <div class="total-banner">
+                    <span class="price-label">Estimasi Harga Per Pax</span>
+                    <h2 id="perOrang" class="price-text">Rp 0</h2>
+                    
+                    <div class="info-panel">
+                        <span class="btn-unlock no-print" onclick="toggleSecret()">🔒 DATA INTERNAL</span>
+                        
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="opacity-75 small">Durasi Trip:</span>
+                            <span id="durasiInfo" class="fw-bold small">-</span>
+                        </div>
+
+                        <div id="secretPanel" class="secret-data">
+                            <div class="d-flex justify-content-between text-info mb-1 small">
+                                <span>FOC Unit (1:10):</span>
+                                <span id="focInfo">0 Pax</span>
+                            </div>
+                            <div class="d-flex justify-content-between text-warning fw-bold small">
+                                <span>Sales Comm (5%):</span>
+                                <span id="salesInfo">Rp 0</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr class="my-4 opacity-25">
+                    
+                    <div id="summaryText" class="small opacity-75 lh-base"></div>
+
+                    <button class="btn btn-print mt-4 no-print" onclick="window.print()">
+                        CETAK QUOTATION
+                    </button>
+                </div>
+                
+                <div class="mt-4 p-3 bg-white rounded-4 border no-print">
+                    <p class="small text-muted mb-0"><strong>Note:</strong> "Pembayaran: DP 30% saat konfirmasi, pelunasan maksimal 7 hari sebelum perjalanan.".</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+let isSecretVisible = false;
+
+function toggleSecret() {
+    isSecretVisible = !isSecretVisible;
+    const panel = document.getElementById('secretPanel');
+    const btn = document.querySelector('.btn-unlock');
+    panel.style.display = isSecretVisible ? 'block' : 'none';
+    btn.innerText = isSecretVisible ? '🔓 LOCK DATA' : '🔒 DATA INTERNAL';
+}
+
+function hitung() {
+    const p = parseFloat(document.getElementById('peserta').value) || 0;
+    const malam = parseFloat(document.getElementById('malam').value) || 0;
+    const share = parseFloat(document.getElementById('roomShare').value) || 4;
+    const transportRate = parseFloat(document.getElementById('transportSelect').value) || 0;
+    const mFreq = parseFloat(document.getElementById('makanFreq').value) || 0;
+    const mPrice = parseFloat(document.getElementById('makanPrice').value) || 0;
+    const kaosRate = parseFloat(document.getElementById('kaosSelect').value) || 0;
+
+    const hotelData = document.getElementById('hotelSelect').value.split('|');
+    const tgl = document.getElementById('tglBerangkat').value;
+    const isWeekend = tgl && (new Date(tgl).getDay() === 0 || new Date(tgl).getDay() === 6);
+    const hotelRate = isWeekend ? parseFloat(hotelData[1]) : parseFloat(hotelData[0]);
+
+    // === HITUNG JUMLAH BUS ===
+    let kapasitasBus = 45;
+    const transportText = document.getElementById('transportSelect').selectedOptions[0].text;
+
+    if (transportText.includes("ELF")) kapasitasBus = 15;
+    else if (transportText.includes("HIACE")) kapasitasBus = 14;
+    else if (transportText.includes("MEDIUM")) kapasitasBus = 33;
+    else if (transportText.includes("BIG BUS")) kapasitasBus = 45;
+
+    const jumlahBus = Math.ceil(p / kapasitasBus);
+    const totalHari = malam + 1;
+
+    const costTransport = transportRate * jumlahBus * totalHari;
+
+    // === BIAYA LAIN ===
+    const costMakan = (mFreq * mPrice) * p;
+    const costHotel = (malam > 0) ? (hotelRate * malam * Math.ceil(p / share)) : 0;
+    const costKaos = kaosRate * p;
+
+    let costWisata = 0;
+    document.querySelectorAll('.dest:checked').forEach(d => {
+        costWisata += (parseFloat(d.getAttribute('data-price')) * p);
+        d.closest('.city-box').classList.add('has-checked');
+    });
+
+    document.querySelectorAll('.city-box').forEach(box => {
+        if (box.querySelectorAll('.dest:checked').length === 0) {
+            box.classList.remove('has-checked');
+        }
+    });
+
+    const totalModal = costTransport + costMakan + costHotel + costWisata + costKaos;
+    const totalMarkup = totalModal * 1.20; // markup 20%
+
+    const jmlFreePax = Math.floor(p / 10); // FOC 1:10
+    const focPilihan = Math.min(jmlFreePax, 25);
+    const subsidiFOC = focPilihan * (p > 0 ? totalMarkup / p : 0);
+
+    const totalJualGrup = totalMarkup - subsidiFOC;
+    const hargaPerPax = p > 0 ? Math.ceil((totalJualGrup / p) / 1000) * 1000 : 0;
+    const komisiSales = totalJualGrup * 0.05;
+
+    // === UPDATE UI ===
+    document.getElementById('perOrang').innerText = "Rp " + hargaPerPax.toLocaleString('id-ID');
+    document.getElementById('focInfo').innerText = focPilihan + " Pax";
+    document.getElementById('salesInfo').innerText = "Rp " + Math.round(komisiSales).toLocaleString('id-ID');
+    document.getElementById('durasiInfo').innerText = totalHari + " Hari " + malam + " Malam";
+
+    const kaosStatus = kaosRate > 0 ? "Include Merchandise" : "No Merchandise";
+    document.getElementById('summaryText').innerHTML = `
+        <strong>Group Size:</strong> ${p} Pax<br>
+        <strong>Transport:</strong> ${jumlahBus} Unit (${transportText})<br>
+        <strong>Catering:</strong> ${mFreq}x Meal Service<br>
+        <strong>Add-ons:</strong> ${kaosStatus}
+    `;
+}
+
+window.onload = hitung;
+</script>
